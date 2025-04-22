@@ -1,3 +1,5 @@
+using NUnit.Framework;
+
 namespace Healthcare.Tests
 {
     public class Tests

@@ -22,9 +22,42 @@ namespace Healthcare.Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Composite key tanımı yapılabilir: örnek için UserRole tablosu
+            // Configure UserRole entity
             modelBuilder.Entity<UserRole>()
                 .HasKey(ur => ur.Id);
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.User)
+                .WithMany(u => u.UserRoles)
+                .HasForeignKey(ur => ur.UserId);
+
+            modelBuilder.Entity<UserRole>()
+                .HasOne(ur => ur.Role)
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleId);
+
+            // Configure Patient-User relationship
+            modelBuilder.Entity<Patient>()
+                .HasOne(p => p.User)
+                .WithOne()
+                .HasForeignKey<Patient>(p => p.UserId);
+
+            // Configure Doctor-Hospital relationship
+            modelBuilder.Entity<Doctor>()
+                .HasOne(d => d.Hospital)
+                .WithMany(h => h.Doctors)
+                .HasForeignKey(d => d.HospitalId);
+
+            // Configure Appointment relationships
+            modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.Doctor)
+                .WithMany(d => d.Appointments)
+                .HasForeignKey(a => a.DoctorId);
+
+            modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.Patient)
+                .WithMany(p => p.Appointments)
+                .HasForeignKey(a => a.PatientId);
 
             base.OnModelCreating(modelBuilder);
         }
